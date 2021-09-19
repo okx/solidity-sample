@@ -178,7 +178,7 @@ func writeContractTx(nonce uint64, contractAddr common.Address, gasPrice *big.In
 	value := big.NewInt(0)
 	gasLimit := uint64(3000000)
 
-	num := big.NewInt(999)
+	num := big.NewInt(100)
 	data, err := sampleContractABI.Pack("add", num)
 	if err != nil {
 		log.Fatal(err)
@@ -210,10 +210,10 @@ func readContract(client *ethclient.Client, contractAddr common.Address) {
 }
 
 func getTxHash(signedTx *types.Transaction) common.Hash {
-	ts := types.Transactions{signedTx}
-	rawTx := hex.EncodeToString(ts.GetRlp(0))
+	//ts := types.Transactions{signedTx}
+	//rawTx := hex.EncodeToString(ts.)
 
-	rawTxBytes, err := hex.DecodeString(rawTx)
+	rawTxBytes, err := hex.DecodeString("rawTx")
 	if err != nil {
 		log.Fatal(err)
 	}
