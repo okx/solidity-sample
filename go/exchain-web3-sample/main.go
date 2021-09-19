@@ -30,7 +30,7 @@ var (
 	host    = "https://exchaintestrpc.okex.org"
 	privKey = "89c81c304704e9890025a5a91898802294658d6e4034a11c6116f4b129ea12d3"
 	OecChainId int64 = 65
-	GasPrice int64 = 100000000
+	GasPrice int64 = 100000000 // 0.1 gwei
 	sampleContractByteCode []byte
 	sampleContractABI      abi.ABI
 )
@@ -162,16 +162,24 @@ func writeContract(client *ethclient.Client,
 		log.Fatalf("failed to fetch the value of nonce from network: %+v", err)
 	}
 
+	gasLimit := uint64(3000000)
+	num := big.NewInt(100)
+
 	fmt.Printf(
-		"writeContract: \n" +
-			"	sender Address<%s>, \n" +
-		"	gasPrice<%.1f>gwei, \n" +
-		"	contractAddr<%s>\n",
+		"writeContract: \n"+
+			"	sender Address: <%s>, \n"+
+			"	gasPrice: <%.1f> gwei, \n"+
+			"	contractAddr: <%s>\n"+
+			"	ABI: <add %d>\n"+
+			"	nonce: %d\n",
 		fromAddress.Hex(),
 		float64(gasPrice.Uint64())/1e9,
-		contractAddr.String())
+		contractAddr.String(),
+		num,
+		nonce)
 
-	unsignedTx := writeContractTx(nonce, contractAddr, gasPrice)
+	unsignedTx := writeContractTx(nonce, contractAddr, gasPrice, gasLimit, "add", num)
+
 	// 2. sign unsignedTx -> rawTx
 	signedTx, err := types.SignTx(unsignedTx, types.NewEIP155Signer(chainID), privateKey)
 	if err != nil {
@@ -185,19 +193,17 @@ func writeContract(client *ethclient.Client,
 	}
 }
 
-func writeContractTx(nonce uint64, contractAddr common.Address, gasPrice *big.Int) *types.Transaction {
+func writeContractTx(nonce uint64,
+	contractAddr common.Address,
+	gasPrice *big.Int, gasLimit uint64,
+	name string, args ...interface{}) *types.Transaction {
 	value := big.NewInt(0)
-	gasLimit := uint64(3000000)
 
-	num := big.NewInt(100)
-	data, err := sampleContractABI.Pack("add", num)
+	data, err := sampleContractABI.Pack(name, args)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Printf("	abi <add>: %d\n", num)
-	fmt.Printf("	nonce: %d\n", nonce)
-
+	
 	return types.NewTransaction(nonce, contractAddr, value, gasLimit, gasPrice, data)
 }
 
