@@ -163,10 +163,10 @@ func writeContract(client *ethclient.Client,
 
 	fmt.Printf(
 		"writeContract: \n" +
-			"	sender Address<0x%s>, \n" +
+			"	sender Address<%s>, \n" +
 		"	gasPrice<%s>, \n" +
 		"	contractAddr<%s>\n",
-		hex.EncodeToString(fromAddress.Bytes()),
+		fromAddress.Hex(),
 		gasPrice.String(),
 		contractAddr.String())
 
