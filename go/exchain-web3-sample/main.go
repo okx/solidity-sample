@@ -29,19 +29,19 @@ import (
 var (
 	host    = "https://exchaintestrpc.okex.org"
 	privKey = "89c81c304704e9890025a5a91898802294658d6e4034a11c6116f4b129ea12d3"
-
+	oecTestnetChainId int64 = 65
 	sampleContractByteCode []byte
 	sampleContractABI      abi.ABI
 )
 
 func init() {
-	bin, err := ioutil.ReadFile("../../../contracts/counter.bin")
+	bin, err := ioutil.ReadFile("../../contracts/counter.bin")
 	if err != nil {
 		log.Fatal(err)
 	}
 	sampleContractByteCode = common.Hex2Bytes(string(bin))
 
-	abiByte, err := ioutil.ReadFile("../../../contracts/counter.abi")
+	abiByte, err := ioutil.ReadFile("../../contracts/counter.abi")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -61,7 +61,7 @@ func main() {
 		log.Fatalf("failed to initialize client: %+v", err)
 	}
 	// 0.2 get the chain-id from network
-	chainID := big.NewInt(65)
+	chainID := big.NewInt(oecTestnetChainId)
 	if err != nil {
 		log.Fatalf("failed to fetch the chain-id from network: %+v", err)
 	}
@@ -79,7 +79,7 @@ func main() {
 	fromAddress := crypto.PubkeyToAddress(*pubkeyECDSA)
 
 	// 0.5 get the gasPrice
-	gasPrice := big.NewInt(1000000000)
+	gasPrice := big.NewInt(10000000000)
 	//
 	// 1. deploy contract
 	//
@@ -88,9 +88,10 @@ func main() {
 	//
 	// 2. call contract(write)
 	//
+	readContract(client, contractAddr)
+
 	writeContract(client, fromAddress, gasPrice, chainID, privateKey, contractAddr)
-	fmt.Println(client, fromAddress, gasPrice, chainID, privateKey, contractAddr)
-	time.Sleep(time.Second * 3)
+	time.Sleep(time.Second * 5)
 	//
 	// 3. call contract(read)
 	//
@@ -160,6 +161,15 @@ func writeContract(client *ethclient.Client,
 		log.Fatalf("failed to fetch the value of nonce from network: %+v", err)
 	}
 
+	fmt.Printf(
+		"writeContract: \n" +
+			"	sender Address<0x%s>, \n" +
+		"	gasPrice<%s>, \n" +
+		"	contractAddr<%s>\n",
+		hex.EncodeToString(fromAddress.Bytes()),
+		gasPrice.String(),
+		contractAddr.String())
+
 	unsignedTx := writeContractTx(nonce, contractAddr, gasPrice)
 	// 2. sign unsignedTx -> rawTx
 	signedTx, err := types.SignTx(unsignedTx, types.NewEIP155Signer(chainID), privateKey)
@@ -183,6 +193,10 @@ func writeContractTx(nonce uint64, contractAddr common.Address, gasPrice *big.In
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Printf("	abi <add>: %d\n", num)
+	fmt.Printf("	nonce: %d\n", nonce)
+
 	return types.NewTransaction(nonce, contractAddr, value, gasLimit, gasPrice, data)
 }
 
@@ -206,7 +220,7 @@ func readContract(client *ethclient.Client, contractAddr common.Address) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(ret)
+	fmt.Printf("readContract <getCounter>: %d\n", ret)
 }
 
 func getTxHash(signedTx *types.Transaction) common.Hash {
