@@ -1,4 +1,4 @@
-module github.com/okex/solidity-sample/go/exchain-web3-sample/golang
+module github.com/okex/solidity-sample/go/exchain-web3-sample
 
 go 1.14
 
