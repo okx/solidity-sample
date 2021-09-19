@@ -29,7 +29,8 @@ import (
 var (
 	host    = "https://exchaintestrpc.okex.org"
 	privKey = "89c81c304704e9890025a5a91898802294658d6e4034a11c6116f4b129ea12d3"
-	oecTestnetChainId int64 = 65
+	OecChainId int64 = 65
+	GasPrice int64 = 100000000
 	sampleContractByteCode []byte
 	sampleContractABI      abi.ABI
 )
@@ -61,7 +62,7 @@ func main() {
 		log.Fatalf("failed to initialize client: %+v", err)
 	}
 	// 0.2 get the chain-id from network
-	chainID := big.NewInt(oecTestnetChainId)
+	chainID := big.NewInt(OecChainId)
 	if err != nil {
 		log.Fatalf("failed to fetch the chain-id from network: %+v", err)
 	}
@@ -79,7 +80,7 @@ func main() {
 	fromAddress := crypto.PubkeyToAddress(*pubkeyECDSA)
 
 	// 0.5 get the gasPrice
-	gasPrice := big.NewInt(10000000000)
+	gasPrice := big.NewInt(GasPrice)
 	//
 	// 1. deploy contract
 	//
@@ -164,10 +165,10 @@ func writeContract(client *ethclient.Client,
 	fmt.Printf(
 		"writeContract: \n" +
 			"	sender Address<%s>, \n" +
-		"	gasPrice<%s>, \n" +
+		"	gasPrice<%.1f>gwei, \n" +
 		"	contractAddr<%s>\n",
 		fromAddress.Hex(),
-		gasPrice.String(),
+		float64(gasPrice.Uint64())/1e9,
 		contractAddr.String())
 
 	unsignedTx := writeContractTx(nonce, contractAddr, gasPrice)
