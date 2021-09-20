@@ -28,7 +28,7 @@ import (
 
 const (
 	RpcUrl          = "https://exchaintestrpc.okex.org"
-	ChainId int64   = 65 // oec testnet
+	ChainId int64   = 65 //  oec testnet
 	PrivKey         = "89c81c304704e9890025a5a91898802294658d6e4034a11c6116f4b129ea12d3"
 	GasPrice int64  = 100000000 // 0.1 gwei
 	GasLimit uint64 = 3000000
