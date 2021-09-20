@@ -80,7 +80,7 @@ func main() {
 	if !ok {
 		log.Fatalln("failed to switch secp256k1 private key -> pubkey")
 	}
-	fromAddress := crypto.PubkeyToAddress(*pubkeyECDSA)
+	senderAddress := crypto.PubkeyToAddress(*pubkeyECDSA)
 
 
 	// 1. deploy contract
@@ -88,12 +88,113 @@ func main() {
 	contractAddr := common.HexToAddress("0x79BE5cc37B7e17594028BbF5d43875FDbed417db")
 
 	// 2. call contract(write)
-	readContract(client, contractAddr, "getCounter")
-	writeContract(client, contractAddr, fromAddress, privateKey , "add", big.NewInt(100))
+	ReadContract(client, contractAddr, "getCounter")
+	WriteContract(client, contractAddr, senderAddress, privateKey,"add", big.NewInt(100))
 	time.Sleep(time.Second * 5)
 
-	readContract(client, contractAddr, "getCounter")
+	ReadContract(client, contractAddr, "getCounter")
 }
+
+
+func WriteContract(client *ethclient.Client,
+	contractAddr common.Address,
+	fromAddress common.Address,
+	privateKey *ecdsa.PrivateKey,
+	name string,
+	args ...interface{}) {
+	// 0. get the value of nonce, based on address
+	nonce, err := client.PendingNonceAt(context.Background(), fromAddress)
+	if err != nil {
+		log.Fatalf("failed to fetch the value of nonce from network: %+v", err)
+	}
+
+	// 0.5 get the gasPrice
+	gasPrice := big.NewInt(GasPrice)
+
+	fmt.Printf(
+		"writeContract: \n"+
+			"	sender address: <%s>\n"+
+			"	contract address: <%s>\n"+
+			"	gas price: <%.1f> gwei\n"+
+			"	nonce: %d\n"+
+			"	ABI: <%s %s>\n",
+		fromAddress.Hex(),
+		contractAddr.String(),
+		float64(gasPrice.Uint64())/1e9,
+		nonce, name, args)
+
+	data, err := sampleContractABI.Pack(name, args...)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	unsignedTx := types.NewTransaction(nonce, contractAddr, big.NewInt(0), GasLimit, gasPrice, data)
+
+	// 2. sign unsignedTx -> rawTx
+	signedTx, err := types.SignTx(unsignedTx, types.NewEIP155Signer(big.NewInt(ChainId)), privateKey)
+	if err != nil {
+		log.Fatalf("failed to sign the unsignedTx offline: %+v", err)
+	}
+
+	// 3. send rawTx
+	err = client.SendTransaction(context.Background(), signedTx)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+
+func ReadContract(client *ethclient.Client, contractAddr common.Address, name string, args ...interface{}) {
+	data, err := sampleContractABI.Pack(name, args ...)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	msg := ethereum.CallMsg{
+		To:   &contractAddr,
+		Data: data,
+	}
+
+	output, err := client.CallContract(context.Background(), msg, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	ret, err := sampleContractABI.Unpack(name, output)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("readContract <%s>: %d\n", name, ret)
+}
+
+func getTxHash(signedTx *types.Transaction) common.Hash {
+	//ts := types.Transactions{signedTx}
+	//rawTx := hex.EncodeToString(ts.)
+
+	rawTxBytes, err := hex.DecodeString("rawTx")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	tx := new(evmtypes.MsgEthereumTx)
+	// RLP decode raw transaction bytes
+	if err := rlp.DecodeBytes(rawTxBytes, tx); err != nil {
+		log.Fatal(err)
+	}
+
+	cdc := codec.MakeCodec(app.ModuleBasics)
+	txEncoder := authclient.GetTxEncoder(cdc)
+	txBytes, err := txEncoder(tx)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var hexBytes bytes.HexBytes
+	hexBytes = tmhash.Sum(txBytes)
+	hash := common.HexToHash(hexBytes.String())
+	return hash
+}
+
 
 func deployContract(client *ethclient.Client,
 	fromAddress common.Address,
@@ -144,112 +245,4 @@ func deployContractTx(nonce uint64, gasPrice *big.Int) *types.Transaction {
 	}
 	data := append(sampleContractByteCode, input...)
 	return types.NewContractCreation(nonce, value, gasLimit, gasPrice, data)
-}
-
-func writeContract(client *ethclient.Client,
-	contractAddr common.Address,
-fromAddress common.Address,
-	privateKey *ecdsa.PrivateKey,
-	name string,
-	args ...interface{}) {
-	// 0. get the value of nonce, based on address
-	nonce, err := client.PendingNonceAt(context.Background(), fromAddress)
-	if err != nil {
-		log.Fatalf("failed to fetch the value of nonce from network: %+v", err)
-	}
-
-	// 0.5 get the gasPrice
-	gasPrice := big.NewInt(GasPrice)
-
-	fmt.Printf(
-		"writeContract: \n"+
-			"	sender Address: <%s>\n"+
-			"	contractAddr: <%s>\n"+
-			"	gasPrice: <%.1f> gwei\n"+
-			"	nonce: %d\n"+
-			"	ABI: <%s %s>\n",
-		fromAddress.Hex(),
-		contractAddr.String(),
-		float64(gasPrice.Uint64())/1e9,
-		nonce, name, args)
-
-	unsignedTx := writeContractTx(nonce, contractAddr, gasPrice, GasLimit, name, args...)
-
-	// 2. sign unsignedTx -> rawTx
-	signedTx, err := types.SignTx(unsignedTx, types.NewEIP155Signer(big.NewInt(ChainId)), privateKey)
-	if err != nil {
-		log.Fatalf("failed to sign the unsignedTx offline: %+v", err)
-	}
-
-	// 3. send rawTx
-	err = client.SendTransaction(context.Background(), signedTx)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-func writeContractTx(nonce uint64,
-	contractAddr common.Address,
-	gasPrice *big.Int, gasLimit uint64,
-	name string, args ...interface{}) *types.Transaction {
-	value := big.NewInt(0)
-
-	//data, err := sampleContractABI.Pack(name, big.NewInt(100))
-	data, err := sampleContractABI.Pack(name, args...)
-	if err != nil {
-		log.Fatal(err)
-	}
-	
-	return types.NewTransaction(nonce, contractAddr, value, gasLimit, gasPrice, data)
-}
-
-func readContract(client *ethclient.Client, contractAddr common.Address, name string, args ...interface{}) {
-	data, err := sampleContractABI.Pack(name, args ...)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	msg := ethereum.CallMsg{
-		To:   &contractAddr,
-		Data: data,
-	}
-
-	output, err := client.CallContract(context.Background(), msg, nil)
-	if err != nil {
-		panic(err)
-	}
-
-	ret, err := sampleContractABI.Unpack(name, output)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("readContract <%s>: %d\n", name, ret)
-}
-
-func getTxHash(signedTx *types.Transaction) common.Hash {
-	//ts := types.Transactions{signedTx}
-	//rawTx := hex.EncodeToString(ts.)
-
-	rawTxBytes, err := hex.DecodeString("rawTx")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	tx := new(evmtypes.MsgEthereumTx)
-	// RLP decode raw transaction bytes
-	if err := rlp.DecodeBytes(rawTxBytes, tx); err != nil {
-		log.Fatal(err)
-	}
-
-	cdc := codec.MakeCodec(app.ModuleBasics)
-	txEncoder := authclient.GetTxEncoder(cdc)
-	txBytes, err := txEncoder(tx)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var hexBytes bytes.HexBytes
-	hexBytes = tmhash.Sum(txBytes)
-	hash := common.HexToHash(hexBytes.String())
-	return hash
 }
