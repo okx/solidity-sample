@@ -7,7 +7,7 @@ import (
 	"math/big"
 )
 
-var PrivKey666 = "01375084a83cad214b3c53210efa7f4e67cfc409af3245bf8886ff446bf36328"
+var PrivKey = "01375084a83cad214b3c53210efa7f4e67cfc409af3245bf8886ff446bf36328"
 
 func main() {
 	client, err := ethclient.Dial(RpcUrl)
@@ -19,7 +19,7 @@ func main() {
 }
 
 func send(client *ethclient.Client, to string) {
-	privateKey, senderAddress := initKey(PrivKey666)
+	privateKey, senderAddress := initKey(PrivKey)
 	toAddress := common.HexToAddress(to)
 
 	// send 0.001okt
