@@ -84,8 +84,9 @@ func main() {
 
 
 	// 1. deploy contract
-	//contractAddr := deployContract(client, fromAddress, gasPrice, chainID, privateKey)
-	contractAddr := common.HexToAddress("0x79BE5cc37B7e17594028BbF5d43875FDbed417db")
+	contractAddr := deployContract(client, senderAddress, big.NewInt(GasPrice), big.NewInt(ChainId), privateKey)
+
+	//contractAddr := common.HexToAddress("0x79BE5cc37B7e17594028BbF5d43875FDbed417db")
 
 	// 2. call contract(write)
 	ReadContract(client, contractAddr, "getCounter")
@@ -169,7 +170,7 @@ func ReadContract(client *ethclient.Client, contractAddr common.Address, name st
 
 func getTxHash(signedTx *types.Transaction) common.Hash {
 	//ts := types.Transactions{signedTx}
-	//rawTx := hex.EncodeToString(ts.)
+	//rawTx := hex.EncodeToString(ts.EncodeIndex())
 
 	rawTxBytes, err := hex.DecodeString("rawTx")
 	if err != nil {
@@ -194,6 +195,8 @@ func getTxHash(signedTx *types.Transaction) common.Hash {
 	hash := common.HexToHash(hexBytes.String())
 	return hash
 }
+
+
 
 
 func deployContract(client *ethclient.Client,
@@ -231,8 +234,14 @@ func deployContract(client *ethclient.Client,
 		log.Fatal(err)
 	}
 
+	fmt.Printf("new Contract Address: %s\n", receipt.ContractAddress.String())
+
 	return receipt.ContractAddress
 }
+
+
+
+
 
 func deployContractTx(nonce uint64, gasPrice *big.Int) *types.Transaction {
 	value := big.NewInt(0)
