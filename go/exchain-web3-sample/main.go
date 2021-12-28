@@ -4,31 +4,24 @@ import (
 	bytes2 "bytes"
 	"context"
 	"crypto/ecdsa"
-	"encoding/hex"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"math/big"
 	"time"
 
-	authclient "github.com/cosmos/cosmos-sdk/x/auth/client/utils"
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"github.com/ethereum/go-ethereum/rlp"
-	"github.com/okex/exchain/app"
-	"github.com/okex/exchain/app/codec"
-	evmtypes "github.com/okex/exchain/x/evm/types"
-	"github.com/tendermint/tendermint/crypto/tmhash"
-	"github.com/tendermint/tendermint/libs/bytes"
+	"github.com/okex/exchain-ethereum-compatible/utils"
 )
 
 const (
 	RpcUrl          = "https://exchaintestrpc.okex.org"
-	ChainId int64   = 65 //  oec testnet
+	ChainId  int64  = 65 //  oec testnet
 	PrivKey         = "89c81c304704e9890025a5a91898802294658d6e4034a11c6116f4b129ea12d3"
 	GasPrice int64  = 100000000 // 0.1 gwei
 	GasLimit uint64 = 3000000
@@ -82,19 +75,18 @@ func main() {
 	}
 	senderAddress := crypto.PubkeyToAddress(*pubkeyECDSA)
 
-
 	// 1. deploy contract
-	//contractAddr := deployContract(client, fromAddress, gasPrice, chainID, privateKey)
-	contractAddr := common.HexToAddress("0x79BE5cc37B7e17594028BbF5d43875FDbed417db")
+	contractAddr := deployContract(client, senderAddress, big.NewInt(GasPrice), big.NewInt(ChainId), privateKey)
+
+	//contractAddr := common.HexToAddress("0x79BE5cc37B7e17594028BbF5d43875FDbed417db")
 
 	// 2. call contract(write)
 	ReadContract(client, contractAddr, "getCounter")
-	WriteContract(client, contractAddr, senderAddress, privateKey,"add", big.NewInt(100))
+	WriteContract(client, contractAddr, senderAddress, privateKey, "add", big.NewInt(100))
 	time.Sleep(time.Second * 5)
 
 	ReadContract(client, contractAddr, "getCounter")
 }
-
 
 func WriteContract(client *ethclient.Client,
 	contractAddr common.Address,
@@ -143,9 +135,8 @@ func WriteContract(client *ethclient.Client,
 	}
 }
 
-
 func ReadContract(client *ethclient.Client, contractAddr common.Address, name string, args ...interface{}) {
-	data, err := sampleContractABI.Pack(name, args ...)
+	data, err := sampleContractABI.Pack(name, args...)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -166,35 +157,6 @@ func ReadContract(client *ethclient.Client, contractAddr common.Address, name st
 	}
 	fmt.Printf("readContract <%s>: %d\n", name, ret)
 }
-
-func getTxHash(signedTx *types.Transaction) common.Hash {
-	//ts := types.Transactions{signedTx}
-	//rawTx := hex.EncodeToString(ts.)
-
-	rawTxBytes, err := hex.DecodeString("rawTx")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	tx := new(evmtypes.MsgEthereumTx)
-	// RLP decode raw transaction bytes
-	if err := rlp.DecodeBytes(rawTxBytes, tx); err != nil {
-		log.Fatal(err)
-	}
-
-	cdc := codec.MakeCodec(app.ModuleBasics)
-	txEncoder := authclient.GetTxEncoder(cdc)
-	txBytes, err := txEncoder(tx)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var hexBytes bytes.HexBytes
-	hexBytes = tmhash.Sum(txBytes)
-	hash := common.HexToHash(hexBytes.String())
-	return hash
-}
-
 
 func deployContract(client *ethclient.Client,
 	fromAddress common.Address,
@@ -223,13 +185,18 @@ func deployContract(client *ethclient.Client,
 	}
 
 	// 4. get the contract address based on tx hash
-	hash := getTxHash(signedTx)
+	hash, err := utils.Hash(signedTx)
+	if err != nil {
+		log.Fatal(err)
+	}
 	time.Sleep(time.Second * 5)
 
 	receipt, err := client.TransactionReceipt(context.Background(), hash)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	fmt.Printf("new Contract Address: %s\n", receipt.ContractAddress.String())
 
 	return receipt.ContractAddress
 }

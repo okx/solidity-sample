@@ -3,98 +3,20 @@ module github.com/okex/solidity-sample/go/exchain-web3-sample
 go 1.14
 
 require (
-	github.com/99designs/keyring v1.1.6
-	github.com/ChainSafe/go-schnorrkel v0.0.0-20200405005733-88cbf1b4c40d
-	github.com/Comcast/pulsar-client-go v0.1.1
-	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d
-	github.com/Workiva/go-datastructures v1.0.52
-	github.com/aliyun/alibaba-cloud-sdk-go v1.61.18
-	github.com/aliyun/aliyun-oss-go-sdk v2.1.6+incompatible
-	github.com/apolloconfig/agollo/v4 v4.0.8
-	github.com/bartekn/go-bip39 v0.0.0-20171116152956-a05967ea095d
-	github.com/beorn7/perks v1.0.1
-	github.com/bgentry/speakeasy v0.1.0
-	github.com/btcsuite/btcd v0.21.0-beta
-	github.com/buger/jsonparser v0.0.0-20181115193947-bf1c66bbce23
-	github.com/cespare/xxhash/v2 v2.1.1
-	github.com/cosmos/cosmos-sdk v0.39.2
-	github.com/cosmos/go-bip39 v0.0.0-20180819234021-555e2067c45d
-	github.com/cosmos/ledger-cosmos-go v0.11.1
-	github.com/davecgh/go-spew v1.1.1
-	github.com/dvsekhvalnov/jose2go v0.0.0-20200901110807-248326c1351b
-	github.com/enigmampc/btcutil v1.0.3-0.20200723161021-e2fb6adb2a25
+	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
+	github.com/allegro/bigcache v1.2.1 // indirect
+	github.com/btcsuite/btcd v0.21.0-beta // indirect
+	github.com/cespare/cp v1.1.1 // indirect
+	github.com/deckarep/golang-set v1.7.1 // indirect
 	github.com/ethereum/go-ethereum v1.10.8
-	github.com/garyburd/redigo v1.6.2
-	github.com/go-errors/errors v1.0.1
-	github.com/go-kit/kit v0.10.0
-	github.com/go-logfmt/logfmt v0.5.0
-	github.com/go-ole/go-ole v1.2.4
-	github.com/go-redis/redis v6.15.9+incompatible
-	github.com/go-sql-driver/mysql v1.5.0
-	github.com/godbus/dbus v0.0.0-20190726142602-4481cbc300e2
-	github.com/gogo/protobuf v1.3.1
-	github.com/golang/protobuf v1.4.3
-	github.com/golang/snappy v0.0.3
-	github.com/google/uuid v1.1.5
-	github.com/gorilla/handlers v1.4.2
-	github.com/gorilla/mux v1.8.0
-	github.com/gorilla/websocket v1.4.2
-	github.com/gtank/merlin v0.1.1
-	github.com/hashicorp/golang-lru v0.5.5-0.20210104140557-80c98217689d
-	github.com/jinzhu/gorm v1.9.16
-	github.com/jmespath/go-jmespath v0.4.0
-	github.com/json-iterator/go v1.1.9
-	github.com/lestrrat/go-file-rotatelogs v0.0.0-20180223000712-d3151e2a480f
-	github.com/lestrrat/go-strftime v0.0.0-20180220042222-ba3bf9c1d042
-	github.com/libp2p/go-buffer-pool v0.0.2
-	github.com/mattn/go-isatty v0.0.12
-	github.com/matttproud/golang_protobuf_extensions v1.0.1
-	github.com/minio/highwayhash v1.0.0
-	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
-	github.com/mosn/holmes v0.0.0-20210917160530-0143a1b8bd9b
-	github.com/nacos-group/nacos-sdk-go v1.0.0
-	github.com/okex/exchain v0.19.5
-	github.com/pelletier/go-toml v1.6.0
-	github.com/pkg/errors v0.9.1
-	github.com/pmezard/go-difflib v1.0.0
-	github.com/prometheus/client_golang v1.5.1
-	github.com/prometheus/client_model v0.2.0
-	github.com/prometheus/common v0.9.1
-	github.com/prometheus/procfs v0.0.10
-	github.com/rakyll/statik v0.1.6
-	github.com/rcrowley/go-metrics v0.0.0-20200313005456-10cdbea86bc0
-	github.com/rs/cors v1.7.0
-	github.com/segmentio/kafka-go v0.2.2
-	github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible
-	github.com/shopspring/decimal v1.2.0
-	github.com/spf13/cobra v1.1.1
-	github.com/spf13/pflag v1.0.5
-	github.com/spf13/viper v1.7.1
-	github.com/status-im/keycard-go v0.0.0-20190424133014-d95853db0f48
-	github.com/stretchr/testify v1.7.0
-	github.com/syndtr/goleveldb v1.0.1-0.20210305035536-64b5b1c73954
-	github.com/tendermint/btcd v0.1.1
-	github.com/tendermint/crypto v0.0.0-20191022145703-50d29ede1e15
-	github.com/tendermint/go-amino v0.15.1
-	github.com/tendermint/iavl v0.14.1
-	github.com/tendermint/tendermint v0.33.9
-	github.com/tendermint/tm-db v0.5.2
-	github.com/tklauser/go-sysconf v0.3.5
-	github.com/toolkits/concurrent v0.0.0-20150624120057-a4371d70e3e3
-	github.com/willf/bitset v1.1.11
-	github.com/zondax/hid v0.9.0
-	go.uber.org/zap v1.15.0
-	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2
-	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d
-	golang.org/x/sys v0.0.0-20210816183151-1e6c022a8912
-	golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1
-	golang.org/x/text v0.3.6
-	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba
-	google.golang.org/grpc v1.30.0
-	google.golang.org/protobuf v1.25.0
-	gopkg.in/ini.v1 v1.51.0
-	gopkg.in/yaml.v2 v2.4.0
-	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
+	github.com/go-kit/kit v0.10.0 // indirect
+	github.com/go-ole/go-ole v1.2.4 // indirect
+	github.com/kr/pretty v0.2.0 // indirect
+	github.com/okex/exchain-ethereum-compatible v1.0.2
+	github.com/prometheus/tsdb v0.9.1 // indirect
+	github.com/status-im/keycard-go v0.0.0-20190424133014-d95853db0f48 // indirect
+	google.golang.org/protobuf v1.25.0 // indirect
+	gopkg.in/check.v1 v1.0.0-20190902080502-41f04d3bba15 // indirect
 )
 
 replace (
