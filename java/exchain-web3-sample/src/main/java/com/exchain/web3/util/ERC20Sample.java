@@ -19,7 +19,7 @@ class Sample {
         Web3j web3j = Web3j.build(new HttpService(rpcEndpoint));
 
         // Prepare a wallet
-        String pk = "0x5bbbef76458bf30511c9ee6ed56783644eb339258d02656755c68098c4809130";
+        String pk = "your private key";
 
         Credentials credentials = Credentials.create(pk);
 
