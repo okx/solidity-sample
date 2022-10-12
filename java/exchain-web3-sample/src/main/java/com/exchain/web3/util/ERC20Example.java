@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 
 
-class Sample {
+class Example {
 
     static public ERC20 getERC20Instance(Credentials credentials) throws IOException {
         // Connect Web3j to the Blockchain
