@@ -39,7 +39,7 @@ public class Main {
     private static String systemContractAddress = "0x7e5E6AF6424BE7A835313777Fc6E0d1912e52Fc8";
     private static String stakingContractAddress = "0xE6947172736e3ed558Ec375cf16C62488627a18e";
 
-    private static String privateKey = "89c81c304704e9890025a5a91898802294658d6e4034a11c6116f4b129ea12d3";
+    private static String privateKey = "";
     private static String fromAddress = "0x04A987fa1Bd4b2B908e9A3Ca058cc8BD43035991";
 
     private static Web3j web3j = Web3j.build(new HttpService(url));
