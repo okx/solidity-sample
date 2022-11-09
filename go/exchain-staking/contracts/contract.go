@@ -66,6 +66,7 @@ func (c ContractWrap) Invoke(client *ethclient.Client,
 	// 0.5 get the gasPrice
 	gasprice := big.NewInt(gasPrice)
 
+	// print transaction information
 	fmt.Printf(
 		"writeContract: \n"+
 			"	sender address: <%s>\n"+
@@ -83,6 +84,7 @@ func (c ContractWrap) Invoke(client *ethclient.Client,
 		return nil, err
 	}
 
+	// gen msg
 	processedData, err := client.CallContract(context.Background(), ethereum.CallMsg{
 		From: fromAddress,
 		To:   &c.Address,
@@ -93,18 +95,21 @@ func (c ContractWrap) Invoke(client *ethclient.Client,
 		return nil, fmt.Errorf("process data failed: +v", err)
 	}
 
+	// unpack result
 	ret, err := c.Abi.Unpack(name, processedData)
 	if err != nil {
 		return nil, err
 	}
 
+	// invoke system contract
+
+	// 1. encode data using system contract
 	data, err = c.System.encodeData(ret[0])
 	if err != nil {
 		return nil, err
 	}
 
 	unsignedTx := types.NewTransaction(nonce, c.System.Address, big.NewInt(0), gasLimit, gasprice, data)
-
 	// 2. sign unsignedTx -> rawTx
 	signedTx, err := types.SignTx(unsignedTx, types.NewEIP155Signer(big.NewInt(chainid)), privateKey)
 	if err != nil {
