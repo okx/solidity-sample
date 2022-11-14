@@ -24,7 +24,9 @@ const (
 )
 
 const (
-	systemContarctAddress  = "0x7e5E6AF6424BE7A835313777Fc6E0d1912e52Fc8"
+	// define testnet systemContractAddress. mainnet systemContractAddress is here: https://www.oklink.com/zh-cn/okc/address/0xe9196e65a0b6705777fbe829dfa94ec8b9f2ba48
+	systemContarctAddress = "0x7e5E6AF6424BE7A835313777Fc6E0d1912e52Fc8"
+	// define testnet gasbackHelplerContractAddress. mainnet gasbackHelplerContractAddress is here: https://www.oklink.com/zh-cn/okc/address/0x0dd08b74c111d148751f38f02ab0c3408ead7d18
 	gasBackContractAddress = "0x56CeE7c20F4C83996e72b65a7b410fcE4C3b52B0"
 )
 

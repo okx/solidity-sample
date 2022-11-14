@@ -22,7 +22,9 @@ const (
 )
 
 const (
-	systemContarctAddress           = "0x7e5E6AF6424BE7A835313777Fc6E0d1912e52Fc8"
+	// define testnet systemContractAddress. mainnet systemContractAddress is here: https://www.oklink.com/zh-cn/okc/address/0xe9196e65a0b6705777fbe829dfa94ec8b9f2ba48
+	systemContarctAddress = "0x7e5E6AF6424BE7A835313777Fc6E0d1912e52Fc8"
+	//  // define testnet stakingContractAddress. mainnet stakingContractAddress is here: https://www.oklink.com/zh-cn/okc/address/0x1b29c875bd7ec9a12c29fc6eef8e451207352ef3
 	stakingMSGHelperContractAddress = "0xE6947172736e3ed558Ec375cf16C62488627a18e"
 )
 
