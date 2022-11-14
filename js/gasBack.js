@@ -123,8 +123,11 @@ const contractAddressNeedRegister = ""
 const nonce = 
 
 //contract address in okc test net
-const systemContarctAddress = "0x7e5E6AF6424BE7A835313777Fc6E0d1912e52Fc8"
-const gasBackContractAddress = "0x56CeE7c20F4C83996e72b65a7b410fcE4C3b52B0"
+//note: okc main net is: 0xd6bce454316b8ddFb76bB7bb1B57B8942B09Acd5
+const systemContarctAddress = "0x727d14EfC4FB5281A18A6d62BCf486a1cF4d2210"
+//gasBackMSGHelper proxy contract address in okc test net
+//note: okc main net is: 0x0DD08B74c111D148751f38f02ab0C3408ead7d18
+const gasBackContractAddress = "0x9e472f77e2A5C8f09B237273960c776ddE1D98C1"
 
 //init web3, connect okc test net
 const web3 = new Web3(new Web3.providers.HttpProvider("https://exchaintestrpc.okex.org"));
