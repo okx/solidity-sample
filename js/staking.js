@@ -114,6 +114,9 @@ const stakingMSGHelperABI = [
 const userPrivateKey = ""
 //user address, add you address
 const userAddress = ""
+//validator address
+const validatorAddresses = ""
+const validatorAddresses2 = ""
 //the OKT you want deposit
 const amount = "100"
 
@@ -131,6 +134,7 @@ const web3 = new Web3(new Web3.providers.HttpProvider("https://exchaintestrpc.ok
 const systemContract = new web3.eth.Contract(systemContractABI, systemContarctAddress);
 const stakingMSGHelperContract = new web3.eth.Contract(stakingMSGHelperABI, stakingMSGHelperContractAddress);
 
+//deposit
 //get data
 let backData = await stakingMSGHelperContract.methods.genDepositMsg(amount).call({from: userAddress})
 
@@ -139,6 +143,57 @@ let encodeData  = await systemContract.methods.invoke(backData).encodeABI();
 
 //sign
 let sign = await web3.eth.accounts.signTransaction({
+    gas: 500000,
+    to: systemContarctAddress,
+    data: encodeData,
+}, userPrivateKey)
+
+//send tx
+result = await web3.eth.sendSignedTransaction(sign.rawTransaction)
+
+//withdraw
+//get data
+backData = await stakingMSGHelperContract.methods.genWithdrawMsg(amount).call({from: userAddress})
+
+//encode
+encodeData  = await systemContract.methods.invoke(backData).encodeABI();
+
+//sign
+sign = await web3.eth.accounts.signTransaction({
+    gas: 500000,
+    to: systemContarctAddress,
+    data: encodeData,
+}, userPrivateKey)
+
+//send tx
+result = await web3.eth.sendSignedTransaction(sign.rawTransaction)
+
+//add validator addresses
+//get data
+backData = await stakingMSGHelperContract.methods.genAddSharesMsg([validatorAddresses, validatorAddresses2]).call({from: userAddress})
+
+//encode
+encodeData  = await systemContract.methods.invoke(backData).encodeABI();
+
+//sign
+sign = await web3.eth.accounts.signTransaction({
+    gas: 500000,
+    to: systemContarctAddress,
+    data: encodeData,
+}, userPrivateKey)
+
+//send tx
+result = await web3.eth.sendSignedTransaction(sign.rawTransaction)
+
+//withdraw all rewards
+//get data
+backData = await stakingMSGHelperContract.methods.genWithdrawAllRewardsMsg().call({from: userAddress})
+
+//encode
+encodeData  = await systemContract.methods.invoke(backData).encodeABI();
+
+//sign
+sign = await web3.eth.accounts.signTransaction({
     gas: 500000,
     to: systemContarctAddress,
     data: encodeData,
