@@ -1,0 +1,15 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_data",
+        "type": "string"
+      }
+    ],
+    "name": "invoke",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

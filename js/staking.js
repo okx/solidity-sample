@@ -125,6 +125,7 @@ const systemContractAddress = "0xd6bce454316b8ddFb76bB7bb1B57B8942B09Acd5"
 //stakingMSGHelper proxy contract address in okc main net
 const stakingMSGHelperContractAddress = "0x1b29c875Bd7Ec9a12C29fc6eeF8E451207352EF3"
 
+
 //init web3, connect okc main net
 const web3 = new Web3(new Web3.providers.HttpProvider("https://exchainrpc.okex.org"));
 
