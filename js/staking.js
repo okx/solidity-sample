@@ -149,23 +149,6 @@ let sign = await web3.eth.accounts.signTransaction({
 //send tx
 result = await web3.eth.sendSignedTransaction(sign.rawTransaction)
 
-//withdraw
-//get data
-backData = await stakingMSGHelperContract.methods.genWithdrawMsg(amount).call({from: userAddress})
-
-//encode
-encodeData  = await systemContract.methods.invoke(backData).encodeABI();
-
-//sign
-sign = await web3.eth.accounts.signTransaction({
-    gas: 500000,
-    to: systemContractAddress,
-    data: encodeData,
-}, userPrivateKey)
-
-//send tx
-result = await web3.eth.sendSignedTransaction(sign.rawTransaction)
-
 //add validator addresses
 //get data
 backData = await stakingMSGHelperContract.methods.genAddSharesMsg([validatorAddresses, validatorAddresses2]).call({from: userAddress})
@@ -186,6 +169,23 @@ result = await web3.eth.sendSignedTransaction(sign.rawTransaction)
 //withdraw all rewards
 //get data
 backData = await stakingMSGHelperContract.methods.genWithdrawAllRewardsMsg().call({from: userAddress})
+
+//encode
+encodeData  = await systemContract.methods.invoke(backData).encodeABI();
+
+//sign
+sign = await web3.eth.accounts.signTransaction({
+    gas: 500000,
+    to: systemContractAddress,
+    data: encodeData,
+}, userPrivateKey)
+
+//send tx
+result = await web3.eth.sendSignedTransaction(sign.rawTransaction)
+
+//withdraw
+//get data
+backData = await stakingMSGHelperContract.methods.genWithdrawMsg(amount).call({from: userAddress})
 
 //encode
 encodeData  = await systemContract.methods.invoke(backData).encodeABI();
