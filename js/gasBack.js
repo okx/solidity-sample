@@ -47,7 +47,7 @@ const gasBackContractABI = [
         },
         {
           "internalType": "address",
-          "name": "_withdrawerAddress",
+          "name": "_recipientAddress",
           "type": "address"
         },
         {
@@ -76,7 +76,7 @@ const gasBackContractABI = [
         },
         {
           "internalType": "address",
-          "name": "_withdrawerAddress",
+          "name": "_recipientAddress",
           "type": "address"
         }
       ],
@@ -117,23 +117,22 @@ const userPrivateKey = ""
 //user address, add your address
 const userAddress = ""
 //address to receive rewards
-const withdrawerAddress = ""
-const withdrawerAddress2 = ""
+const recipientAddress = ""
+//address that the new receiver address
+const updateRecipientAddress = ""
 //contract address who want register
 const contractAddressNeedRegister = ""
 // nonce when deploy contract
 // eg:const nonce = 81
 const nonce = 
 
-//contract address in okc test net
-//note: okc main net is: 0xd6bce454316b8ddFb76bB7bb1B57B8942B09Acd5
-const systemContractAddress = "0x727d14EfC4FB5281A18A6d62BCf486a1cF4d2210"
-//gasBackMSGHelper proxy contract address in okc test net
-//note: okc main net is: 0x0DD08B74c111D148751f38f02ab0C3408ead7d18
-const gasBackContractAddress = "0x9e472f77e2A5C8f09B237273960c776ddE1D98C1"
+//contract address in okc main net
+const systemContractAddress = "0xd6bce454316b8ddFb76bB7bb1B57B8942B09Acd5"
+//gasBackMSGHelper proxy contract address in okc main net
+const gasBackContractAddress = "0x0DD08B74c111D148751f38f02ab0C3408ead7d18"
 
-//init web3, connect okc test net
-const web3 = new Web3(new Web3.providers.HttpProvider("https://exchaintestrpc.okex.org"));
+//init web3, connect okc main net
+const web3 = new Web3(new Web3.providers.HttpProvider("https://exchainrpc.okex.org"));
 
 //init contract object
 const systemContract = new web3.eth.Contract(systemContractABI, systemContractAddress);
@@ -141,7 +140,7 @@ const gasBackContract = new web3.eth.Contract(gasBackContractABI, gasBackContrac
 
 //register
 //get data
-let backData = await gasBackContract.methods.genRegisterMsg(contractAddressNeedRegister,withdrawerAddress, [nonce,]).call({from: userAddress})
+let backData = await gasBackContract.methods.genRegisterMsg(contractAddressNeedRegister,recipientAddress, [nonce,]).call({from: userAddress})
 
 //encode
 let encodeData  = await systemContract.methods.invoke(backData).encodeABI();
@@ -159,7 +158,7 @@ result = await web3.eth.sendSignedTransaction(sign.rawTransaction)
 
 //update
 //get data
-backData = await gasBackContract.methods.genUpdateMsg(contractAddressNeedRegister, withdrawerAddress2).call({from: userAddress})
+backData = await gasBackContract.methods.genUpdateMsg(contractAddressNeedRegister, updateRecipientAddress).call({from: userAddress})
 
 //encode
 encodeData  = await systemContract.methods.invoke(backData).encodeABI();

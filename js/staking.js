@@ -117,18 +117,16 @@ const userAddress = ""
 //validator address
 const validatorAddresses = ""
 const validatorAddresses2 = ""
-//the OKT you want deposit
+//the OKT you want deposit,Minimum amount is 1.(1 = 1 OKT)
 const amount = "100"
 
-//contract address in okc test net
-//note: okc main net is: 0xd6bce454316b8ddFb76bB7bb1B57B8942B09Acd5
-const systemContractAddress = "0x727d14EfC4FB5281A18A6d62BCf486a1cF4d2210"
-//stakingMSGHelper proxy contract address in okc test net
-//note: okc main net is: 0x1b29c875Bd7Ec9a12C29fc6eeF8E451207352EF3
-const stakingMSGHelperContractAddress = "0x37AFc0Fe2b14acC1593C4435F3B53ac0335Ee292"
+//contract address in okc main net
+const systemContractAddress = "0xd6bce454316b8ddFb76bB7bb1B57B8942B09Acd5"
+//stakingMSGHelper proxy contract address in okc main net
+const stakingMSGHelperContractAddress = "0x1b29c875Bd7Ec9a12C29fc6eeF8E451207352EF3"
 
-//init web3, connect okc test net
-const web3 = new Web3(new Web3.providers.HttpProvider("https://exchaintestrpc.okex.org"));
+//init web3, connect okc main net
+const web3 = new Web3(new Web3.providers.HttpProvider("https://exchainrpc.okex.org"));
 
 //init contract object
 const systemContract = new web3.eth.Contract(systemContractABI, systemContractAddress);
